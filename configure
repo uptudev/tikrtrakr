@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Checks for Zig, Clang, GCC, then CC in that order.
+# To override, set OVERRIDE to either 1, 2, 3, or 4.
+
+export OVERRIDE=0
+
+case "$OVERRIDE" in
+    1)
+        CC="zig cc"
+        ;;
+    2)
+        CC="clang"
+        ;;
+    3)
+        CC="gcc"
+        ;;
+    4)
+        CC="cc"
+        ;;
+    *)
+        if command -v zig &> /dev/null; then
+            CC="zig cc"
+        elif command -v clang &> /dev/null; then
+            CC="clang"
+        elif command -v gcc &> /dev/null; then
+            CC="gcc"
+        else
+            echo "No compiler found"
+            echo "Either install Zig, Clang, or GCC, or pester me to add your compiler."
+            exit 1
+        fi
+        ;;
+esac
+
+echo "Using $CC as the compiler"
+echo -e "INSTALL_DIR:=/usr/local/bin\n\ntictrack:\n\t$CC -I include src/**/*.c src/tictrack.c -o tictrack\n\ntictrackd:\n\t$CC -I include src/**/*.c src/tictrackd.c -o tictrackd\n\n.PHONY: install\ninstall: tictrack tictrackd\n\tinstall -m 755 tictrack \${INSTALL_DIR}\n\tinstall -m 755 tictrackd \${INSTALL_DIR}" > Makefile

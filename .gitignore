@@ -1,0 +1,8 @@
+# executable shouldn't be in the repo
+tictrack
+
+# no coredumps 
+CORE-*
+
+# Makefile should be configured to use the correct compiler
+Makefile
