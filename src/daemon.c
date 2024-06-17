@@ -12,7 +12,7 @@ static void clean(char **argv) {
         return;
     }
 
-    sprintf(path, "/tmp/tictrackd.%s.%d", argv[2], interval);
+    sprintf(path, "/tmp/tikrtrakrd.%s.json", argv[2], interval);
     remove(path);
 }
 
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     if (getuid() == 0) {
         fprintf(stderr, "%s Dropping privileges...\n", info());
         if (!(setgid(100) == 0 && setuid(1000) == 0)) {
-            fprintf(stderr, "Failed to drop privileges; don't run this daemon as root\n");
+            fprintf(stderr, "%s Failed to drop privileges; don't run this daemon as root\n", err());
             return 1;
         }
     }

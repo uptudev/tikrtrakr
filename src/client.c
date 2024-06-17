@@ -10,11 +10,11 @@ int main(int argc, char **argv) {
         return 1;
     }
     char filename[32];
-    sprintf(filename, "/tmp/tictrackd.%s.json", argv[1]);
+    sprintf(filename, "/tmp/tikrtrakrd.%s.json", argv[1]);
 
     FILE *fd = fopen(filename, "r");
     if (fd == NULL) {
-        fprintf(stderr, "%s File /tmp/tictrackd.%s doesn't exist; please start the daemon with `tictrack %s`\n", err(), argv[1], argv[1]);
+        fprintf(stderr, "%s File /tmp/tikrtrakrd.%s.json doesn't exist; please start the daemon with `tikrtrakr %s`\n", err(), argv[1], argv[1]);
         return 1;
     }
 

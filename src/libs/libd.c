@@ -166,7 +166,7 @@ static void main_loop(char *symbol_pair, uint interval) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 
     char filename[32];
-    sprintf(filename, "/tmp/tictrackd.%s.json", symbol_pair);
+    sprintf(filename, "/tmp/tikrtrakrd.%s.json", symbol_pair);
 
     fprintf(stderr, "%s Checking if file %s exists\n", I, filename);
     FILE *fd = fopen(filename, "r");
