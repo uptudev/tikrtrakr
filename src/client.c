@@ -1,6 +1,18 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include "libd.h"
+
+void trim_zeroes(char *str) {
+    int n = strspn(str, "0");
+    if (n > 0) {
+        str += n;
+    }
+
+    char *end = strchr(str, '\0');
+    while ((end -= 1) >= str && *end == '0');
+    *(end + 1) = '\0';
+}
 
 int main(int argc, char **argv) {
     /* Parse input */
@@ -43,6 +55,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%s Invalid JSON in file /tmp/tikrtrakrd.%s.json\n", err(), argv[1]);
         exit(1);
     }
+    trim_zeroes(token);
     printf("%s\n", token);
     return 0;
 }
