@@ -187,15 +187,12 @@ static void main_loop(char *symbol_pair, uint interval) {
     while (!TERM) {
         res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
-            fprintf(stderr, "%s Can't fetch data from Binance; daemon creation failed.\n", E);
-            curl_easy_cleanup(curl);
-            remove(filename);
-
-            exit(1);
+            fprintf(stderr, "%s Can't fetch data from Binance; keeping old data.\n", W);
+        } else {
+            fd = fopen(filename, "w");
+            fprintf(fd, "%s", buffer);
+            fclose(fd);
         }
-        fd = fopen(filename, "w");
-        fprintf(fd, "%s", buffer);
-        fclose(fd);
         sleep(interval);
     }
     curl_easy_cleanup(curl);
