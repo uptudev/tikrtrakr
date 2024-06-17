@@ -1,18 +1,36 @@
-#include "daemon.h"
+#include "libd.h"
 
 volatile int TERM = FALSE;
 const char *E = "[X]";
 const char *W = "[!]";
 const char *I = "[*]";
 
+/*
+ *  Returns the error prefix.
+ *
+ *  @return Error prefix
+ *  Exposed for use in other files.
+ */
 const char* err() {
     return E;
 }
 
+/*
+ *  Returns the warning prefix.
+ *
+ *  @return Warning prefix
+ *  Exposed for use in other files.
+ */
 const char* warn() {
     return W;
 }
 
+/*
+ *  Returns the info prefix.
+ *
+ *  @return Info prefix
+ *  Exposed for use in other files.
+ */
 const char* info() {
     return I;
 }
@@ -128,6 +146,12 @@ static int attach_fds_to_null() {
     return TRUE;
 }
 
+static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream) {
+    size_t written = size * nmemb;
+    memcpy(stream, ptr, written + 1);
+    return written;
+}
+
 /* Main loop */
 
 /*
@@ -140,10 +164,29 @@ static int attach_fds_to_null() {
  *  This function should be called after init_daemon() to start the main loop of the daemon process.
  */
 static void main_loop(char *symbol_pair, uint interval) {
-    char filename[32];
-    sprintf(filename, "/tmp/tictrackd.%s.%d", symbol_pair, interval);
+    char buffer[1024];
 
-    fprintf(stderr, "%s Creating file %s\n", I, filename);
+    CURL *curl;
+    CURLcode res;
+    curl = curl_easy_init();
+
+    if (curl == NULL) {
+        fprintf(stderr, "%s Can't initialize cURL; daemon creation failed.\n", E);
+        exit(1);
+    }
+
+    char url[64];
+    sprintf(url, "https://api.binance.com/api/v3/ticker/price?symbol=%s", symbol_pair);
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_CA_CACHE_TIMEOUT, 604800L);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
+
+    char filename[32];
+    sprintf(filename, "/tmp/tikrtrakrd.%s.json", symbol_pair);
+
+    fprintf(stderr, "%s Checking if file %s exists\n", I, filename);
     FILE *fd = fopen(filename, "r");
     if (fd != NULL) {
         fprintf(stderr, "%s File %s already exists; daemon creation failed.\n", E, filename);
@@ -151,19 +194,27 @@ static void main_loop(char *symbol_pair, uint interval) {
         exit(1);
     }
 
-    fprintf(stderr, "%s Opening file %s\n", I, filename);
+    fprintf(stderr, "%s Creating file %s\n", I, filename);
     fd = fopen(filename, "w");
     if (fd == NULL) {
         fprintf(stderr, "%s Can't create file %s; daemon creation failed.\n", E, filename);
         exit(1);
     }
-    fprintf(stderr, "%s Tracking %s every %d seconds\n", I, symbol_pair, interval);
+    fclose(fd);
+
     while (!TERM) {
-        // Main loop code goes here
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            fprintf(stderr, "%s Can't fetch data from Binance; keeping old data.\n", W);
+        } else {
+            fd = fopen(filename, "w");
+            fprintf(fd, "%s", buffer);
+            fclose(fd);
+        }
         sleep(interval);
     }
+    curl_easy_cleanup(curl);
     fprintf(stderr, "%s Daemon process terminated\n", I);
-    fclose(fd);
 
     /* Cleanup */
     remove(filename);
