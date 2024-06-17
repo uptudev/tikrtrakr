@@ -3,10 +3,9 @@
 #include "libd.h"
 
 int main(int argc, char **argv) {
-
     /* Parse input */
     if (argc != 2) {
-        fprintf(stderr, "%s Usage: %s <symbol pair>\n%s Example:\n\t%s XRPUSDT\n", err(), argv[0], info(), argv[0]);
+        fprintf(stderr, "%s Usage: %s <symbol argv[1]>\n%s Example:\n\t%s XRPUSDT\n", err(), argv[0], info(), argv[0]);
         return 1;
     }
     char filename[32];
@@ -22,10 +21,28 @@ int main(int argc, char **argv) {
     char buffer[1024];
     fread(buffer, 1, 1024, fd);
     fclose(fd);
-    char *token = strtok(buffer, " ");
-    while (token != NULL) {
-        printf("%s\n", token);
-        token = strtok(NULL, " ");
+    char *token = strtok(buffer, "\"");
+    if (token == NULL) {
+        fprintf(stderr, "%s Invalid JSON in file /tmp/tikrtrakrd.%s.json\n", err(), argv[1]);
+        return 1;
     }
+    while (strcmp(token, "price") != 0) {
+        token = strtok(NULL, "\"");
+        if (token == NULL) {
+            fprintf(stderr, "%s Invalid JSON in file /tmp/tikrtrakrd.%s.json\n", err(), argv[1]);
+            exit(1);
+        }
+    }
+    token = strtok(NULL, "\"");
+    if (token == NULL) {
+        fprintf(stderr, "%s Invalid JSON in file /tmp/tikrtrakrd.%s.json\n", err(), argv[1]);
+        exit(1);
+    }
+    token = strtok(NULL, "\"");
+    if (token == NULL) {
+        fprintf(stderr, "%s Invalid JSON in file /tmp/tikrtrakrd.%s.json\n", err(), argv[1]);
+        exit(1);
+    }
+    printf("%s\n", token);
     return 0;
 }
