@@ -3,6 +3,14 @@
 #include <string.h>
 #include "libd.h"
 
+/*
+ *  Trims leading and trailing zeroes from a string.
+ *
+ *  @param str Pointer to the string to trim
+ *  @return void
+ *
+ *  This function modifies the input string in place.
+ */
 void trim_zeroes(char *str) {
     int n = strspn(str, "0");
     if (n > 0) {
@@ -14,8 +22,19 @@ void trim_zeroes(char *str) {
     *(end + 1) = '\0';
 }
 
+/*
+ *  Reads and displays the price of a cryptocurrency symbol pair from a JSON file.
+ *
+ *  @param argc Number of command-line arguments
+ *  @param argv Array of command-line arguments
+ *  @return int Exit status
+ *
+ *  This program expects one command-line argument: the symbol pair to query.
+ *  It reads the corresponding JSON file and extracts the price, trimming any leading or trailing zeroes.
+ *  If the file does not exist or contains invalid JSON, an error message is displayed.
+ */
 int main(int argc, char **argv) {
-    /* Parse input */
+    // Input parsing
     if (argc != 2) {
         fprintf(stderr, "%s Usage: %s <symbol argv[1]>\n%s Example:\n\t%s XRPUSDT\n", err(), argv[0], info(), argv[0]);
         return 1;
@@ -29,7 +48,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    /* Parse JSON in file */
+    // Parse JSON in file
     char buffer[1024];
     fread(buffer, 1, 1024, fd);
     fclose(fd);

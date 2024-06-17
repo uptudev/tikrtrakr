@@ -5,14 +5,32 @@ const char *E = "[X]";
 const char *W = "[!]";
 const char *I = "[*]";
 
+/*
+ *  Returns the error prefix.
+ *
+ *  @return Error prefix
+ *  Exposed for use in other files.
+ */
 const char* err() {
     return E;
 }
 
+/*
+ *  Returns the warning prefix.
+ *
+ *  @return Warning prefix
+ *  Exposed for use in other files.
+ */
 const char* warn() {
     return W;
 }
 
+/*
+ *  Returns the info prefix.
+ *
+ *  @return Info prefix
+ *  Exposed for use in other files.
+ */
 const char* info() {
     return I;
 }

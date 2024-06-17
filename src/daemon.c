@@ -3,6 +3,15 @@
 #include <unistd.h>
 #include <stdio.h>
 
+/*
+ *  Removes the JSON file associated with a cryptocurrency symbol pair.
+ *
+ *  @param argv Array of command-line arguments
+ *  @return void
+ *
+ *  This function constructs the path to the JSON file based on the symbol pair provided in argv[2]
+ *  and removes the file. It is used when the 'clean' command-line option is specified.
+ */
 static void clean(char **argv) {
     char path[32];
     uint interval = atoi(argv[3]);
@@ -16,6 +25,18 @@ static void clean(char **argv) {
     remove(path);
 }
 
+/*
+ *  Starts a daemon process to track the price of a cryptocurrency symbol pair and writes the data to a JSON file.
+ *
+ *  @param argc Number of command-line arguments
+ *  @param argv Array of command-line arguments
+ *  @return int Exit status
+ *
+ *  This program accepts up to three command-line arguments: the symbol pair to track, an optional tracking interval in seconds,
+ *  and an optional 'clean' command to remove existing JSON files. If the 'clean' command is specified, the program will remove
+ *  the JSON file associated with the symbol pair and exit. Otherwise, it starts a daemon process with the specified or default
+ *  tracking interval. The daemon process is responsible for querying the price of the symbol pair and updating the JSON file.
+ */
 int main(int argc, char **argv) {
     uint interval;
 
