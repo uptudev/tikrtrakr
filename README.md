@@ -22,7 +22,13 @@ make
 sudo make install
 ```
 
-## Usage
+```bash
+git clone https://github.com/uptudev/tikrtrakr.git
+cd tikrtrakr
+./configure
+make
+sudo make install
+```
 
 ### Daemon
 
