@@ -140,10 +140,22 @@ static int attach_fds_to_null() {
  *  This function should be called after init_daemon() to start the main loop of the daemon process.
  */
 static void main_loop(char *symbol_pair, uint interval) {
-    char filename[32];
-    sprintf(filename, "/tmp/tictrackd.%s.%d", symbol_pair, interval);
+    CURL *curl;
+    CURLcode res;
+    curl = curl_easy_init();
 
-    fprintf(stderr, "%s Creating file %s\n", I, filename);
+    if (curl == NULL) {
+        fprintf(stderr, "%s Can't initialize cURL; daemon creation failed.\n", E);
+        exit(1);
+    }
+
+    char url[64];
+    sprintf(url, "https://api.binance.com/api/v3/ticker/price?symbol=%s", symbol_pair);
+
+    char filename[32];
+    sprintf(filename, "/tmp/tictrackd.%s", symbol_pair);
+
+    fprintf(stderr, "%s Checking if file %s exists\n", I, filename);
     FILE *fd = fopen(filename, "r");
     if (fd != NULL) {
         fprintf(stderr, "%s File %s already exists; daemon creation failed.\n", E, filename);
@@ -151,19 +163,35 @@ static void main_loop(char *symbol_pair, uint interval) {
         exit(1);
     }
 
-    fprintf(stderr, "%s Opening file %s\n", I, filename);
+    fprintf(stderr, "%s Creating file %s\n", I, filename);
     fd = fopen(filename, "w");
     if (fd == NULL) {
         fprintf(stderr, "%s Can't create file %s; daemon creation failed.\n", E, filename);
         exit(1);
     }
-    fprintf(stderr, "%s Tracking %s every %d seconds\n", I, symbol_pair, interval);
+    fclose(fd);
+
+    fd = fopen(filename, "w");
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_CA_CACHE_TIMEOUT, 604800L);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fd);
+
+    fprintf(stderr, "%s Entering main loop\n", I);
     while (!TERM) {
-        // Main loop code goes here
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            fprintf(stderr, "%s Can't fetch data from Binance; daemon creation failed.\n", E);
+            curl_easy_cleanup(curl);
+            fclose(fd);
+            remove(filename);
+
+            exit(1);
+        }
         sleep(interval);
     }
-    fprintf(stderr, "%s Daemon process terminated\n", I);
     fclose(fd);
+    curl_easy_cleanup(curl);
+    fprintf(stderr, "%s Daemon process terminated\n", I);
 
     /* Cleanup */
     remove(filename);
