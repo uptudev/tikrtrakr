@@ -34,4 +34,4 @@ case "$OVERRIDE" in
 esac
 
 echo "Using $CC as the compiler"
-echo -e "INSTALL_DIR:=/usr/local/bin\n\ntictrackd:\n\t$CC -I include src/**/*.c src/tictrackd.c -o tictrackd\n\ntictrack: ticktrackd\n\t$CC -I include src/**/*.c src/tictrack.c -o tictrack\n\n.PHONY: install\ninstall: tictrack tictrackd\n\tinstall -m 755 tictrack \${INSTALL_DIR}\n\tinstall -m 755 tictrackd \${INSTALL_DIR}" > Makefile
+echo -e "INSTALL_DIR:=/usr/local/bin\n\ntictrack: tictrackd\n\t$CC -I include src/**/*.c src/tictrack.c -o tictrack\n\ntictrackd:\n\t$CC -I include src/**/*.c src/tictrackd.c -o tictrackd\n\n.PHONY: install\ninstall: tictrack tictrackd\n\tinstall -m 755 tictrack \${INSTALL_DIR}\n\tinstall -m 755 tictrackd \${INSTALL_DIR}" > Makefile

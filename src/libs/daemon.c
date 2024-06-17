@@ -225,4 +225,3 @@ void init_helper(char *symbol_pair, uint interval) {
 
     exit(0);
 }
-
