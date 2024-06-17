@@ -1,6 +1,6 @@
 # tikrtrakr
 
-**[Short, memorable description of your project]**
+tikrtrakr is a simple cryptocurrency application that allows users to track the price of a given symbol pair on the Binance exchange. The application is made up of a daemon that fetches the latest price of a given symbol pair at a given interval, and a frontend CLI tool that parses the JSON output of the daemon and displays the price in a human-readable format.
 
 ## Table of Contents
 
@@ -12,32 +12,43 @@
 
 ## Installation
 
-**Clearly describe how to install your project.** This may involve specifying dependencies, prerequisites, and build instructions. Use code blocks, links, and step-by-step guides for clarity.
+This project contains a custom configure/make build system. To build the project, run the following commands:
+
+```bash
+git clone https://github.com/uptudev/tikrtrakr.git
+cd tikrtrakr
+./configure
+make
+sudo make install
+```
 
 ## Usage
 
-**Provide clear and concise instructions on how to use your project.** Explain its functionalities, features, and common use cases. Include examples, screenshots, or GIFs if helpful.
+Start a daemon for a pair to track the price:
 
-**Tips:**
+```bash
+// Start a daemon for the BTCUSDT pair that fetches the price every 60 seconds
+tikrtrakrd BTCUSDT 60
+```
 
-* Break down instructions into logical steps.
-* Use bullet points for succinct explanations.
-* Consider creating a separate "Getting Started" guide for beginners.
+Now, you can use the frontend CLI tool to display the cached price of the pair:
 
+```bash
+// Display the cached price of the BTCUSDT pair
+tikrtrakr BTCUSDT
+```
+
+___
+
+In the future, you can stop the daemon by running the following command:
+
+```bash
+tikrtrakrd stop <symbol_pair>
+```
 ## Contributing
 
-**Outline your contribution guidelines.** Explain how users can contribute to your project, whether through code, bug reports, or documentation improvements. Specify preferred code style, pull request format, and testing procedures.
+PRs will be reviewed and merged if they are relevant to the project. Please ensure that your PRs are well-documented and follow the project's coding standards. Thank you for contributing!
 
 ## License
 
-**Specify the license under which your project is distributed.** Use clear and concise language, and link to the full license text in the `LICENSE` file.
-
-## Additional Information
-
-**Include any other relevant information you want to share.** This could be links to related projects, documentation, support channels, or your contact information.
-
-**Remember:**
-
-* Keep your README.md file concise and focused.
-* Use clear headings, formatting, and visuals for readability.
-* Update your README.md file regularly to reflect changes in your project.
+This project is licensed under the MIT License. For more information, see the `LICENSE` file.
