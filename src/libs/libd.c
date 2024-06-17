@@ -1,4 +1,4 @@
-#include "daemon.h"
+#include "libd.h"
 
 volatile int TERM = FALSE;
 const char *E = "[X]";

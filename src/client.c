@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <stdio.h>
-#include "daemon.h"
+#include "libd.h"
 
 int main(int argc, char **argv) {
 
@@ -22,5 +22,10 @@ int main(int argc, char **argv) {
     char buffer[1024];
     fread(buffer, 1, 1024, fd);
     fclose(fd);
+    char *token = strtok(buffer, " ");
+    while (token != NULL) {
+        printf("%s\n", token);
+        token = strtok(NULL, " ");
+    }
     return 0;
 }

@@ -1,4 +1,4 @@
-#include "daemon.h"
+#include "libd.h"
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -12,7 +12,7 @@ static void clean(char **argv) {
         return;
     }
 
-    sprintf(path, "/tmp/tikrtrakrd.%s.json", argv[2], interval);
+    sprintf(path, "/tmp/tikrtrakrd.%s.json", argv[2]);
     remove(path);
 }
 
