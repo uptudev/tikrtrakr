@@ -22,16 +22,40 @@ make
 sudo make install
 ```
 
-## Usage
+```bash
+git clone https://github.com/uptudev/tikrtrakr.git
+cd tikrtrakr
+./configure
+make
+sudo make install
+```
 
-Start a daemon for a pair to track the price:
+### Daemon
+
+Start a daemon for a pair to track the price, with a default interval of 5 seconds:
+
+```bash
+tikrtrakrd <symbol_pair> [interval]
+```
+
+#### Examples
 
 ```bash
 // Start a daemon for the BTCUSDT pair that fetches the price every 60 seconds
 tikrtrakrd BTCUSDT 60
+
+// Start a daemon for the XRPUSDT pair that fetches the price every 5 seconds
+tikrtrakrd XRPUSDT
 ```
 
+### Client
+
 Now, you can use the frontend CLI tool to display the cached price of the pair:
+```bash
+tikrtrakr <symbol_pair>
+```
+
+#### Example
 
 ```bash
 // Display the cached price of the BTCUSDT pair
