@@ -17,6 +17,9 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%s File /tmp/tictrackd.%s doesn't exist; please start the daemon with `tictrack %s`\n", err(), argv[1], argv[1]);
         return 1;
     }
-    fprintf(stderr, "%s File /tmp/tictrackd.%s exists\n", info(), argv[1]); 
+
+    /* Parse JSON in file */
+    char buffer[1024];
+    fread(buffer, 1, 1024, fd);
     return 0;
 }

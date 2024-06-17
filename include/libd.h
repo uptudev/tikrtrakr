@@ -1,5 +1,5 @@
-#ifndef DAEMON_H
-#define DAEMON_H
+#ifndef LIBD_H
+#define LIBD_H
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
@@ -24,4 +24,4 @@ const char* info();
 void prep_env();
 void init_helper(char *symbol_pair, uint interval);
 
-#endif // !DAEMON_H
+#endif // !LIBD_H
