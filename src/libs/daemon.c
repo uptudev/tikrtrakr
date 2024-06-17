@@ -130,7 +130,7 @@ static int attach_fds_to_null() {
 
 static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream) {
     size_t written = size * nmemb;
-    memcpy(stream, ptr, written);
+    memcpy(stream, ptr, written + 1);
     return written;
 }
 
@@ -194,7 +194,7 @@ static void main_loop(char *symbol_pair, uint interval) {
             exit(1);
         }
         fd = fopen(filename, "w");
-        fprintf(fd, "%s\n", buffer);
+        fprintf(fd, "%s", buffer);
         fclose(fd);
         sleep(interval);
     }
