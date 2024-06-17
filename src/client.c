@@ -21,5 +21,6 @@ int main(int argc, char **argv) {
     /* Parse JSON in file */
     char buffer[1024];
     fread(buffer, 1, 1024, fd);
+    fclose(fd);
     return 0;
 }
