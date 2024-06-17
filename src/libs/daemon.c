@@ -128,6 +128,12 @@ static int attach_fds_to_null() {
     return TRUE;
 }
 
+static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream) {
+    size_t written = size * nmemb;
+    memcpy(stream, ptr, written);
+    return written;
+}
+
 /* Main loop */
 
 /*
@@ -140,6 +146,8 @@ static int attach_fds_to_null() {
  *  This function should be called after init_daemon() to start the main loop of the daemon process.
  */
 static void main_loop(char *symbol_pair, uint interval) {
+    char buffer[1024];
+
     CURL *curl;
     CURLcode res;
     curl = curl_easy_init();
@@ -151,6 +159,11 @@ static void main_loop(char *symbol_pair, uint interval) {
 
     char url[64];
     sprintf(url, "https://api.binance.com/api/v3/ticker/price?symbol=%s", symbol_pair);
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_CA_CACHE_TIMEOUT, 604800L);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 
     char filename[32];
     sprintf(filename, "/tmp/tictrackd.%s", symbol_pair);
@@ -171,25 +184,20 @@ static void main_loop(char *symbol_pair, uint interval) {
     }
     fclose(fd);
 
-    fd = fopen(filename, "w");
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_CA_CACHE_TIMEOUT, 604800L);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fd);
-
-    fprintf(stderr, "%s Entering main loop\n", I);
     while (!TERM) {
         res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
             fprintf(stderr, "%s Can't fetch data from Binance; daemon creation failed.\n", E);
             curl_easy_cleanup(curl);
-            fclose(fd);
             remove(filename);
 
             exit(1);
         }
+        fd = fopen(filename, "w");
+        fprintf(fd, "%s\n", buffer);
+        fclose(fd);
         sleep(interval);
     }
-    fclose(fd);
     curl_easy_cleanup(curl);
     fprintf(stderr, "%s Daemon process terminated\n", I);
 
