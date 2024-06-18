@@ -13,8 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: install libcurl-dev
-      run: sudo apt install libcurl-dev
+    - name: install libcurl4-gnutls-dev
+      run: sudo apt install libcurl4-gnutls-dev
     - name: configure
       run: ./configure
     - name: make
