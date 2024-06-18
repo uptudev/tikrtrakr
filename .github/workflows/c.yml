@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: install curl
+      run: sudo apt install libcurl
     - name: configure
       run: ./configure
     - name: make
