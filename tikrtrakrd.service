@@ -1,0 +1,13 @@
+[Unit]
+Description=daemon for tikrtrakr
+
+[Service]
+User=root
+WorkingDirectory=/
+ExecStart=tikrtrakrd XRPUSDT 60
+# optional items below
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
